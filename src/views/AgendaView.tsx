@@ -103,6 +103,8 @@ export const AgendaView: React.FC<AgendaViewProps> = ({
                 >
                     {/* Date Header */}
                     <div className="sticky top-0 bg-background/95 backdrop-blur-md py-4 z-10 border-b border-border/50">
+                     
+                     
                       <div className="flex items-center gap-4">
                         {/* Date box */}
                         <div className={cn(

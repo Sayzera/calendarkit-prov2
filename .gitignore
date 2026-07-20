@@ -32,6 +32,9 @@ yarn-error.log*
 *.env
 *.env.*
 
+# npm token (local overrides only)
+.npmrc.local
+
 # Vercel
 .vercel
 

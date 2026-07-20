@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from
 import { createPortal } from 'react-dom';
 import { format, Locale } from 'date-fns';
 import { Button } from './ui/button';
-import { ChevronLeft, ChevronRight, Menu, Moon, Sun, CalendarDays, CalendarRange, Calendar, ListTodo, ChevronDown, Globe, Plus, MoreHorizontal } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Menu, Moon, Sun, CalendarDays, CalendarRange, Calendar, ListTodo, ChevronDown, Globe, Plus, MoreHorizontal, CalendarCheck2 } from 'lucide-react';
 import { ViewType, CustomView } from '../types';
 import { LanguageCode, LANGUAGE_META } from '../locales';
 import { cn } from '../utils';
@@ -51,6 +51,10 @@ interface CalendarHeaderProps {
   activeCustomViewId?: string | null;
   /** Called when a custom view button is clicked. */
   onCustomViewChange?: (id: string | null) => void;
+  /** Total number of visible events – displayed as a badge before the view switcher. */
+  eventCount?: number;
+  /** When true, hides the language-switcher dropdown. The active language is still applied. */
+  hideLanguageSwitcher?: boolean;
 }
 
 export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
@@ -72,6 +76,8 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   customViews,
   activeCustomViewId,
   onCustomViewChange,
+  eventCount,
+  hideLanguageSwitcher = false,
 }) => {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isCustomViewOpen, setIsCustomViewOpen] = useState(false);
@@ -189,15 +195,26 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             {translations.today}
           </Button>
 
-          {/* Create Event button — shown next to Today on desktop */}
+          {/* Create Event button — icon only; tooltip label appears on hover */}
           {onCreateEvent && (
-            <Button
-              onClick={onCreateEvent}
-              className="h-9 px-4 rounded-xl text-sm font-medium hidden sm:inline-flex gap-1.5 shadow-sm shadow-primary/20 transition-all duration-200"
-            >
-              <Plus className="h-4 w-4" />
-              <span>{translations.createEvent ?? translations.create}</span>
-            </Button>
+            <div className="relative group hidden sm:block">
+              <Button
+                onClick={onCreateEvent}
+                size="icon"
+                className="h-9 w-9 rounded-xl shadow-sm shadow-primary/20 transition-all duration-200"
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+
+              {/* Tooltip */}
+              <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                <div className="bg-popover text-popover-foreground text-xs font-medium px-2.5 py-1.5 rounded-lg shadow-md border border-border/60 whitespace-nowrap">
+                  {translations.createEvent ?? translations.create}
+                </div>
+                {/* Arrow */}
+                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-popover border-l border-t border-border/60 rotate-45" />
+              </div>
+            </div>
           )}
 
           {/* Navigation arrows */}
@@ -239,8 +256,8 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
       {/* ── Right Section: Language Switcher, Theme Toggle, View Switcher ── */}
       <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto justify-end">
 
-        {/* ── Language Dropdown ── */}
-        {onLanguageChange && (
+        {/* ── Language Dropdown – hidden when hideLanguageSwitcher is true ── */}
+        {onLanguageChange && !hideLanguageSwitcher && (
           <div className="relative">
             <button
               ref={langButtonRef}
@@ -317,6 +334,17 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
               <Moon className="h-4 w-4 text-muted-foreground" />
             )}
           </Button>
+        )}
+
+        {/* ── Event count badge – displayed to the left of the view switcher ── */}
+        {typeof eventCount === 'number' && !hideViewSwitcher && (
+          <div
+            className="flex items-center gap-1.5 h-8 px-3 rounded-xl bg-primary/10 text-primary text-xs font-semibold tabular-nums select-none border border-primary/20 shadow-sm shadow-primary/10"
+            title={`${eventCount} event${eventCount !== 1 ? 's' : ''}`}
+          >
+            <CalendarCheck2 className="w-3.5 h-3.5 shrink-0" />
+            <span>{eventCount}</span>
+          </div>
         )}
 
         {/* ── View Switcher (built-in + custom views) ── */}

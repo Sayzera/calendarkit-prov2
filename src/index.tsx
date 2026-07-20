@@ -17,7 +17,7 @@ import { CalendarProps, CalendarEvent } from './types';
 import { cn } from './utils';
 import { getThemeStyles } from './lib/theme';
 import { useCalendarLogic } from './hooks/useCalendarLogic';
-import { differenceInMinutes, format } from 'date-fns';
+import { differenceInMinutes, format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfDay, endOfDay, addDays } from 'date-fns';
 import { useViewSwipe } from './hooks/useSwipeGesture';
 import { getTranslations, LanguageCode } from './locales';
 import { getTimeFormatFull } from './lib/date';
@@ -76,6 +76,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   onThemeToggle,
   translations,
   hideViewSwitcher,
+  hideLanguageSwitcher,
   initialScrollHour = 8,
   reverseTime: reverseTimeProp = false,
   language = 'tr', // default language is Turkish
@@ -281,6 +282,39 @@ export const Scheduler: React.FC<CalendarProps> = ({
       });
   }, [expandedEvents, calendars]);
 
+  // Count events only within the currently visible date range so the badge reflects
+  // what the user actually sees (month / week / day / agenda next-30-days).
+  const viewEventCount = useMemo(() => {
+    let rangeStart: Date;
+    let rangeEnd: Date;
+
+    switch (view) {
+      case 'month':
+        rangeStart = startOfMonth(currentDate);
+        rangeEnd = endOfMonth(currentDate);
+        break;
+      case 'week':
+        rangeStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+        rangeEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
+        break;
+      case 'day':
+      case 'resource':
+        rangeStart = startOfDay(currentDate);
+        rangeEnd = endOfDay(currentDate);
+        break;
+      case 'agenda':
+        rangeStart = startOfDay(currentDate);
+        rangeEnd = addDays(rangeStart, 30);
+        break;
+      default:
+        return filteredEvents.length;
+    }
+
+    return filteredEvents.filter(
+      (e) => e.start >= rangeStart && e.start <= rangeEnd
+    ).length;
+  }, [filteredEvents, view, currentDate]);
+
   return (
   <>
     <DndContext 
@@ -330,6 +364,8 @@ export const Scheduler: React.FC<CalendarProps> = ({
             customViews={customViews}
             activeCustomViewId={activeCustomViewId}
             onCustomViewChange={(id) => { setActiveCustomViewId(id); setActiveCustomMenu(null); }}
+            eventCount={viewEventCount}
+            hideLanguageSwitcher={hideLanguageSwitcher}
           />
         )}
         

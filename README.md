@@ -78,20 +78,12 @@ import 'calendarkit-prov2/calendarkit.css';
 import { ProScheduler } from 'calendarkit-prov2';
 import type { CalendarEvent, ViewType } from 'calendarkit-prov2';
 import { useState } from 'react';
-import { fr } from 'date-fns/locale';
 
-export default function AdvancedCalendar() {
+export default function MyCalendar() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [view, setView] = useState<ViewType>('week');
   const [date, setDate] = useState(new Date());
   const [isDark, setIsDark] = useState(false);
-  const [language, setLanguage] = useState<'en' | 'fr' | 'tr'>('en');
-  const [timezone, setTimezone] = useState('America/New_York');
-
-  const calendars = [
-    { id: 'work', label: 'Work', color: '#3b82f6', active: true },
-    { id: 'personal', label: 'Personal', color: '#10b981', active: true },
-  ];
 
   return (
     <div className={isDark ? 'dark' : ''}>
@@ -102,12 +94,6 @@ export default function AdvancedCalendar() {
           onViewChange={setView}
           date={date}
           onDateChange={setDate}
-          calendars={calendars}
-          timezone={timezone}
-          onTimezoneChange={setTimezone}
-          language={language}
-          onLanguageChange={setLanguage}
-          locale={language === 'fr' ? fr : undefined}
           isDarkMode={isDark}
           onThemeToggle={() => setIsDark(!isDark)}
           onEventCreate={(event) => {
@@ -169,62 +155,160 @@ import type {
 
 ## Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `events` | `CalendarEvent[]` | Events to display |
-| `view` | `ViewType` | `'month' \| 'week' \| 'day' \| 'agenda' \| 'resource'` |
-| `date` | `Date` | Focused date |
-| `onViewChange` | `(view) => void` | View change handler |
-| `onDateChange` | `(date) => void` | Date change handler |
-| `onEventCreate` | `(event) => void` | New event |
-| `onEventUpdate` | `(event) => void` | Update event |
-| `onEventDelete` | `(id) => void` | Delete event |
-| `onEventDrop` | `(event, start, end) => void` | Drag and drop handler |
-| `onEventResize` | `(event, start, end) => void` | Resize handler |
-| `calendars` | `Calendar[]` | Multi-calendar filter |
-| `resources` | `Resource[]` | Resource view columns |
-| `eventTypes` | `EventType[]` | Event type presets |
-| `timezone` | `string` | IANA timezone |
-| `onTimezoneChange` | `(tz) => void` | Timezone change |
-| `language` | `LanguageCode` | UI language (15+ locales, default `tr`) |
-| `onLanguageChange` | `(lang) => void` | Language change |
-| `locale` | `Locale` | date-fns locale |
-| `isDarkMode` | `boolean` | Dark mode state |
-| `onThemeToggle` | `() => void` | Theme toggle |
-| `theme` | `CalendarTheme` | Custom colors / radius |
-| `customViews` | `CustomView[]` | Extra header views |
-| `sidebarMenus` | `SidebarMenuItem[]` | Custom sidebar pages |
-| `readOnly` | `boolean` | Disable editing |
-| `isLoading` | `boolean` | Skeleton state |
-| `renderEventForm` | `(props) => ReactNode` | Custom event modal |
-| `renderHeader` | `(props) => ReactNode` | Custom header |
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `events` | `CalendarEvent[]` | `[]` | Events to display |
+| `view` | `ViewType` | — | `'month' \| 'week' \| 'day' \| 'agenda' \| 'resource'` |
+| `date` | `Date` | — | Focused date |
+| `onViewChange` | `(view) => void` | — | View change handler |
+| `onDateChange` | `(date) => void` | — | Date change handler |
+| `onEventCreate` | `(event) => void` | — | New event handler |
+| `onEventUpdate` | `(event) => void` | — | Update event handler |
+| `onEventDelete` | `(id) => void` | — | Delete event handler |
+| `onEventDrop` | `(event, start, end) => void` | — | Drag and drop handler |
+| `onEventResize` | `(event, start, end) => void` | — | Resize handler |
+| `calendars` | `Calendar[]` | — | Multi-calendar filter list |
+| `resources` | `Resource[]` | — | Resource view columns |
+| `eventTypes` | `EventType[]` | — | Event type presets |
+| `timezone` | `string` | — | IANA timezone string |
+| `onTimezoneChange` | `(tz) => void` | — | Timezone change handler |
+| `language` | `LanguageCode` | `'tr'` | UI language (15+ locales) |
+| `onLanguageChange` | `(lang) => void` | — | Language change handler |
+| `hideLanguageSwitcher` | `boolean` | `false` | Hide the language dropdown from the header. The `language` prop still sets the active locale. |
+| `locale` | `Locale` | — | date-fns locale for date formatting |
+| `isDarkMode` | `boolean` | — | Dark mode state |
+| `onThemeToggle` | `() => void` | — | Theme toggle handler |
+| `theme` | `CalendarTheme` | — | Custom colors / border radius |
+| `customViews` | `CustomView[]` | — | Extra views shown in the header switcher |
+| `sidebarMenus` | `SidebarMenuItem[]` | — | Custom sidebar pages |
+| `readOnly` | `boolean` | `false` | Disable all editing interactions |
+| `isLoading` | `boolean` | `false` | Show skeleton loading state |
+| `hideViewSwitcher` | `boolean` | `false` | Hide the view switcher buttons from the header |
+| `initialScrollHour` | `number` | `8` | Hour (0–23) the Day/Week views scroll to on mount |
+| `reverseTime` | `boolean` | `false` | Reverse the time axis (23:00 at top, 00:00 at bottom) |
+| `renderEventForm` | `(props) => ReactNode` | — | Replace the default event modal with a custom component |
+| `renderHeader` | `(props) => ReactNode` | — | Replace the entire header with a custom component |
+| `renderMiniCalendar` | `(props) => ReactNode` | — | Replace the sidebar mini calendar |
+| `renderEmptyState` | `(props) => ReactNode` | — | Custom empty state for Agenda view |
 
 ---
 
-## Publish to npm
+## Header features
 
-Repository: [github.com/Sayzera/calendarkit-prov2](https://github.com/Sayzera/calendarkit-prov2)
+### Event count badge
 
-### First-time setup
+The header automatically displays a **live event count badge** next to the view switcher. The count reflects only the events visible in the current view period:
 
-```bash
-npm login
-npm view calendarkit-prov2
-npm run build:lib
+| View | Counted range |
+|------|--------------|
+| Month | All events within the current month |
+| Week | All events within the current week (Mon–Sun) |
+| Day / Resource | Events on the current day |
+| Agenda | Events in the next 30 days |
+
+The badge updates automatically when you navigate or filter calendars.
+
+### Create Event button
+
+The **Create Event** button in the header displays only the `+` icon. Hovering over it reveals a tooltip with the label. On mobile, a floating action button (FAB) is shown instead.
+
+### Language switcher
+
+Use `hideLanguageSwitcher` to lock the UI to a specific language without exposing the dropdown to end users:
+
+```tsx
+<ProScheduler
+  language="tr"
+  hideLanguageSwitcher
+  ...
+/>
 ```
 
-`build:lib` produces:
+---
 
-- `dist/index.js` (CommonJS)
-- `dist/index.mjs` (ESM)
-- `dist/index.d.ts` / `dist/index.d.mts` (TypeScript types)
-- `dist/calendarkit.css` (theme tokens)
+## CalendarEvent model
 
-### Publish
+```ts
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  description?: string;
+  color?: string;
+  allDay?: boolean;
+  calendarId?: string;
+  resourceId?: string;
+  type?: string;
+  icon?: string;
+  attachments?: EventAttachment[];
+  guests?: string[];
+  reminders?: EventReminder[];
+  recurrence?: {
+    freq: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+    interval?: number;
+    count?: number;
+    until?: Date;
+    byweekday?: number[]; // 0 = Monday, 6 = Sunday
+  };
+}
+```
 
-```bash
-npm version patch
-npm publish
+---
+
+## Multi-calendar filtering
+
+```tsx
+const calendars = [
+  { id: 'work',     label: 'Work',     color: '#3b82f6', active: true },
+  { id: 'personal', label: 'Personal', color: '#10b981', active: true },
+];
+
+<ProScheduler
+  calendars={calendars}
+  onCalendarToggle={(id, active) => {
+    // update your calendar list
+  }}
+  ...
+/>
+```
+
+Events with a matching `calendarId` are shown/hidden based on the `active` flag. Events without a `calendarId` are always shown.
+
+---
+
+## Custom views
+
+Add extra views to the header switcher:
+
+```tsx
+const customViews: CustomView[] = [
+  {
+    id: 'timeline',
+    label: 'Timeline',
+    icon: <MyIcon />,
+    component: <MyTimelineView />,
+  },
+];
+
+<ProScheduler customViews={customViews} ... />
+```
+
+---
+
+## Custom sidebar menus
+
+```tsx
+const sidebarMenus: SidebarMenuItem[] = [
+  {
+    id: 'reports',
+    label: 'Reports',
+    icon: <BarChart2 />,
+    component: <ReportsPanel />,
+  },
+];
+
+<ProScheduler sidebarMenus={sidebarMenus} ... />
 ```
 
 ---
