@@ -250,6 +250,11 @@ interface CalendarProps {
     language?: LanguageCode;
     onLanguageChange?: (lang: LanguageCode) => void;
     /**
+     * When true, the language-switcher dropdown is hidden from the header.
+     * The `language` prop still sets the active locale; it just won't be user-changeable.
+     */
+    hideLanguageSwitcher?: boolean;
+    /**
      * Replace the default event form/modal with a fully custom component.
      * Receives open state, the event being edited, and save/delete handlers.
      */

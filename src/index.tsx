@@ -91,8 +91,26 @@ export const Scheduler: React.FC<CalendarProps> = ({
   // Tracks which custom view is active (null = built-in view)
   const [activeCustomViewId, setActiveCustomViewId] = useState<string | null>(null);
 
-  // Internal reverse-time state; can be toggled from the Sidebar switch
-  const [reverseTime, setReverseTime] = useState(reverseTimeProp);
+  // Internal reverse-time state; persisted in localStorage so the preference
+  // survives page refreshes. Falls back to the prop value on first load.
+  const REVERSE_TIME_KEY = 'calendarkit:reverseTime';
+  const [reverseTime, setReverseTime] = useState<boolean>(() => {
+    try {
+      const stored = localStorage.getItem(REVERSE_TIME_KEY);
+      return stored !== null ? stored === 'true' : reverseTimeProp;
+    } catch {
+      return reverseTimeProp;
+    }
+  });
+
+  // Persist whenever the value changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(REVERSE_TIME_KEY, String(reverseTime));
+    } catch {
+      // localStorage may be unavailable in some environments (e.g. SSR)
+    }
+  }, [reverseTime]);
 
   const [activeDragEvent, setActiveDragEvent] = useState<CalendarEvent | null>(null);
 

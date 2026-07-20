@@ -4,11 +4,11 @@ import { createPortal } from 'react-dom';
 import { useDraggable, useSensors, useSensor, PointerSensor, DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { createSnapModifier, restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { motion, AnimatePresence } from 'framer-motion';
-import { format, differenceInMinutes, subDays, addDays, differenceInMilliseconds, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isToday, isSameDay, startOfDay, addWeeks, addMonths, subWeeks, subMonths, startOfMonth, endOfMonth, isTomorrow } from 'date-fns';
+import { startOfDay, addDays, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, format, differenceInMinutes, subDays, differenceInMilliseconds, eachDayOfInterval, isSameMonth, isToday, isSameDay, addWeeks, addMonths, subWeeks, subMonths, isTomorrow } from 'date-fns';
 import { cva } from 'class-variance-authority';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Menu, Plus, ChevronLeft, ChevronRight, Globe, ChevronDown, Sun, Moon, CalendarDays, CalendarRange, Calendar, ListTodo, MoreHorizontal, LayoutGrid, X, Clock, Users, Paperclip, Bell, Edit3, Copy, Trash2, Edit2, MapPin, ExternalLink, AlignLeft, File, Download, BellRing, Check, Repeat, Tag } from 'lucide-react';
+import { Menu, Plus, ChevronLeft, ChevronRight, Globe, ChevronDown, Sun, Moon, CalendarCheck2, CalendarDays, CalendarRange, Calendar, ListTodo, MoreHorizontal, LayoutGrid, X, Clock, Users, Paperclip, Bell, Edit3, Copy, Trash2, Edit2, MapPin, ExternalLink, AlignLeft, File, Download, BellRing, Check, Repeat, Tag } from 'lucide-react';
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { CSS } from '@dnd-kit/utilities';
 import { RRule } from 'rrule';
@@ -1494,7 +1494,9 @@ var CalendarHeader = ({
   onCreateEvent,
   customViews,
   activeCustomViewId,
-  onCustomViewChange
+  onCustomViewChange,
+  eventCount,
+  hideLanguageSwitcher = false
 }) => {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isCustomViewOpen, setIsCustomViewOpen] = useState(false);
@@ -1586,15 +1588,15 @@ var CalendarHeader = ({
       className: "h-9 px-5 rounded-xl text-sm font-medium hidden sm:inline-flex border-[0.5px] border-border/60 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all duration-200"
     },
     translations.today
-  ), onCreateEvent && /* @__PURE__ */ React15__default.createElement(
+  ), onCreateEvent && /* @__PURE__ */ React15__default.createElement("div", { className: "relative group hidden sm:block" }, /* @__PURE__ */ React15__default.createElement(
     Button,
     {
       onClick: onCreateEvent,
-      className: "h-9 px-4 rounded-xl text-sm font-medium hidden sm:inline-flex gap-1.5 shadow-sm shadow-primary/20 transition-all duration-200"
+      size: "icon",
+      className: "h-9 w-9 rounded-xl shadow-sm shadow-primary/20 transition-all duration-200"
     },
-    /* @__PURE__ */ React15__default.createElement(Plus, { className: "h-4 w-4" }),
-    /* @__PURE__ */ React15__default.createElement("span", null, translations.createEvent ?? translations.create)
-  ), /* @__PURE__ */ React15__default.createElement("div", { className: "flex items-center bg-muted/40 rounded-xl p-0.5" }, /* @__PURE__ */ React15__default.createElement(
+    /* @__PURE__ */ React15__default.createElement(Plus, { className: "h-4 w-4" })
+  ), /* @__PURE__ */ React15__default.createElement("div", { className: "pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150" }, /* @__PURE__ */ React15__default.createElement("div", { className: "bg-popover text-popover-foreground text-xs font-medium px-2.5 py-1.5 rounded-lg shadow-md border border-border/60 whitespace-nowrap" }, translations.createEvent ?? translations.create), /* @__PURE__ */ React15__default.createElement("div", { className: "absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-popover border-l border-t border-border/60 rotate-45" }))), /* @__PURE__ */ React15__default.createElement("div", { className: "flex items-center bg-muted/40 rounded-xl p-0.5" }, /* @__PURE__ */ React15__default.createElement(
     Button,
     {
       variant: "ghost",
@@ -1612,7 +1614,7 @@ var CalendarHeader = ({
       className: "rounded-lg h-8 w-8 hover:bg-background/80 transition-all duration-200"
     },
     /* @__PURE__ */ React15__default.createElement(ChevronRight, { className: "h-4 w-4 text-muted-foreground" })
-  )), /* @__PURE__ */ React15__default.createElement("div", { className: "ml-2 md:ml-4 hidden sm:block" }, /* @__PURE__ */ React15__default.createElement("h2", { className: "text-lg md:text-xl font-semibold text-foreground whitespace-nowrap capitalize tracking-tight" }, format(currentDate, "MMMM yyyy", { locale })))), /* @__PURE__ */ React15__default.createElement("div", { className: "sm:hidden" }, /* @__PURE__ */ React15__default.createElement("h2", { className: "text-lg font-semibold text-foreground whitespace-nowrap capitalize tracking-tight" }, format(currentDate, "MMMM yyyy", { locale })))), /* @__PURE__ */ React15__default.createElement("div", { className: "flex items-center gap-2 md:gap-3 w-full md:w-auto justify-end" }, onLanguageChange && /* @__PURE__ */ React15__default.createElement("div", { className: "relative" }, /* @__PURE__ */ React15__default.createElement(
+  )), /* @__PURE__ */ React15__default.createElement("div", { className: "ml-2 md:ml-4 hidden sm:block" }, /* @__PURE__ */ React15__default.createElement("h2", { className: "text-lg md:text-xl font-semibold text-foreground whitespace-nowrap capitalize tracking-tight" }, format(currentDate, "MMMM yyyy", { locale })))), /* @__PURE__ */ React15__default.createElement("div", { className: "sm:hidden" }, /* @__PURE__ */ React15__default.createElement("h2", { className: "text-lg font-semibold text-foreground whitespace-nowrap capitalize tracking-tight" }, format(currentDate, "MMMM yyyy", { locale })))), /* @__PURE__ */ React15__default.createElement("div", { className: "flex items-center gap-2 md:gap-3 w-full md:w-auto justify-end" }, onLanguageChange && !hideLanguageSwitcher && /* @__PURE__ */ React15__default.createElement("div", { className: "relative" }, /* @__PURE__ */ React15__default.createElement(
     "button",
     {
       ref: langButtonRef,
@@ -1666,6 +1668,14 @@ var CalendarHeader = ({
       onClick: onThemeToggle
     },
     isDarkMode ? /* @__PURE__ */ React15__default.createElement(Sun, { className: "h-4 w-4 text-amber-500" }) : /* @__PURE__ */ React15__default.createElement(Moon, { className: "h-4 w-4 text-muted-foreground" })
+  ), typeof eventCount === "number" && !hideViewSwitcher && /* @__PURE__ */ React15__default.createElement(
+    "div",
+    {
+      className: "flex items-center gap-1.5 h-8 px-3 rounded-xl bg-primary/10 text-primary text-xs font-semibold tabular-nums select-none border border-primary/20 shadow-sm shadow-primary/10",
+      title: `${eventCount} event${eventCount !== 1 ? "s" : ""}`
+    },
+    /* @__PURE__ */ React15__default.createElement(CalendarCheck2, { className: "w-3.5 h-3.5 shrink-0" }),
+    /* @__PURE__ */ React15__default.createElement("span", null, eventCount)
   ), !hideViewSwitcher && /* @__PURE__ */ React15__default.createElement("div", { className: "flex items-center bg-muted/50 backdrop-blur-sm rounded-xl p-1 gap-0.5" }, viewConfig.map(({ key, icon: Icon }) => /* @__PURE__ */ React15__default.createElement(
     Button,
     {
@@ -4119,6 +4129,7 @@ var Scheduler = ({
   onThemeToggle,
   translations,
   hideViewSwitcher,
+  hideLanguageSwitcher,
   initialScrollHour = 8,
   reverseTime: reverseTimeProp = false,
   language = "tr",
@@ -4269,6 +4280,34 @@ var Scheduler = ({
       return activeCalendarIds.includes(e.calendarId);
     });
   }, [expandedEvents, calendars]);
+  const viewEventCount = useMemo(() => {
+    let rangeStart;
+    let rangeEnd;
+    switch (view) {
+      case "month":
+        rangeStart = startOfMonth(currentDate);
+        rangeEnd = endOfMonth(currentDate);
+        break;
+      case "week":
+        rangeStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+        rangeEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
+        break;
+      case "day":
+      case "resource":
+        rangeStart = startOfDay(currentDate);
+        rangeEnd = endOfDay(currentDate);
+        break;
+      case "agenda":
+        rangeStart = startOfDay(currentDate);
+        rangeEnd = addDays(rangeStart, 30);
+        break;
+      default:
+        return filteredEvents.length;
+    }
+    return filteredEvents.filter(
+      (e) => e.start >= rangeStart && e.start <= rangeEnd
+    ).length;
+  }, [filteredEvents, view, currentDate]);
   return /* @__PURE__ */ React15__default.createElement(React15__default.Fragment, null, /* @__PURE__ */ React15__default.createElement(
     DndContext,
     {
@@ -4323,7 +4362,9 @@ var Scheduler = ({
           onCustomViewChange: (id2) => {
             setActiveCustomViewId(id2);
             setActiveCustomMenu(null);
-          }
+          },
+          eventCount: viewEventCount,
+          hideLanguageSwitcher
         }
       ),
       /* @__PURE__ */ React15__default.createElement("div", { className: "flex flex-1 overflow-hidden" }, /* @__PURE__ */ React15__default.createElement(
