@@ -1,6 +1,6 @@
 {
   "name": "calendarkit-prov2",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Professional React calendar (v2) with drag-drop, recurring events, timezone, resource scheduling, custom views, and i18n",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
