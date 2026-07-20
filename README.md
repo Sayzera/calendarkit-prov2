@@ -2,8 +2,11 @@
 
 Professional React calendar component with drag-and-drop, recurring events, timezone support, resource scheduling, custom views, sidebar menus, and 15+ languages.
 
+**Author:** [Sayzera](https://github.com/Sayzera)
+
 [![npm version](https://badge.fury.io/js/calendarkit-prov2.svg)](https://www.npmjs.com/package/calendarkit-prov2)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub](https://img.shields.io/github/stars/Sayzera/calendarkit-prov2?style=social)](https://github.com/Sayzera/calendarkit-prov2)
 
 ## Install
 
@@ -200,6 +203,8 @@ import type {
 
 ## Publish to npm
 
+Repository: [github.com/Sayzera/calendarkit-prov2](https://github.com/Sayzera/calendarkit-prov2)
+
 ### First-time setup
 
 ```bash
@@ -222,28 +227,16 @@ npm version patch
 npm publish
 ```
 
-### Scoped package (`@calendarkit/react`)
+---
 
-Change `name` in `package.json`:
+## Links
 
-```json
-"name": "@calendarkit/react"
-```
-
-Then:
-
-```bash
-npm publish --access public
-```
-
-```tsx
-import { ProScheduler } from '@calendarkit/react';
-```
-
-You need access to the `@calendarkit` npm organization.
+- [GitHub Repository](https://github.com/Sayzera/calendarkit-prov2)
+- [npm Package](https://www.npmjs.com/package/calendarkit-prov2)
+- [Issues](https://github.com/Sayzera/calendarkit-prov2/issues)
 
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE). Copyright (c) 2026 [Sayzera](https://github.com/Sayzera).

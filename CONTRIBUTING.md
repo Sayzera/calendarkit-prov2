@@ -1,6 +1,6 @@
-# Contributing to CalendarKit Pro
+# Contributing to CalendarKit Pro v2
 
-Thank you for your interest in contributing to CalendarKit Pro! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to CalendarKit Pro v2! This document provides guidelines and instructions for contributing.
 
 ## Getting Started
 
@@ -14,8 +14,8 @@ Thank you for your interest in contributing to CalendarKit Pro! This document pr
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/calendarkit-pro.git
-   cd calendarkit-pro
+   git clone https://github.com/Sayzera/calendarkit-prov2.git
+   cd calendarkit-prov2
    ```
 3. Install dependencies:
    ```bash
