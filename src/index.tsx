@@ -41,7 +41,7 @@ export type {
 } from './types';
 
 // Re-export locale utilities so consumers can access language metadata
-export { LANGUAGE_META, LOCALES, getTranslations } from './locales';
+export { LANGUAGE_META, LOCALES, DATE_FNS_LOCALES, getTranslations } from './locales';
 
 // Re-export utilities
 export { cn } from './utils';
@@ -414,6 +414,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                     onCalendarToggle={onCalendarToggle}
                     translations={t}
                     renderMiniCalendar={renderMiniCalendar}
+                    locale={locale}
                     sidebarMenus={sidebarMenus}
                     activeCustomMenu={activeCustomMenu}
                     onCustomMenuChange={(id) => { setActiveCustomMenu(id); setActiveCustomViewId(null); }}
@@ -457,6 +458,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                             onCalendarToggle={onCalendarToggle}
                             translations={t}
                             renderMiniCalendar={renderMiniCalendar}
+                            locale={locale}
                             sidebarMenus={sidebarMenus}
                             activeCustomMenu={activeCustomMenu}
                             onCustomMenuChange={(id) => { setActiveCustomMenu(id); setActiveCustomViewId(null); setIsSidebarOpen(false); }}

@@ -27,6 +27,8 @@ interface SidebarProps {
   translations?: any;
   events?: CalendarEvent[];
   onImport?: (events: Partial<CalendarEvent>[]) => void;
+  /** date-fns locale forwarded to the built-in MiniCalendar for date formatting. */
+  locale?: import('date-fns').Locale;
   /** Optional custom mini-calendar component replacing the built-in one. */
   renderMiniCalendar?: (props: {
     currentDate: Date;
@@ -72,6 +74,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   customViews,
   activeCustomViewId,
   onCustomViewChange,
+  locale,
 }) => {
   const [calendarsOpen, setCalendarsOpen] = useState(true);
   const [timezoneOpen, setTimezoneOpen] = useState(false);
@@ -107,7 +110,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const timezones = [
-    { value: '', label: 'Local Time', acronym: 'LOC' },
+    { value: '', label: translations?.localTime ?? 'Local Time', acronym: 'LOC' },
     { value: 'UTC', label: 'UTC', acronym: 'UTC' },
     { value: 'America/New_York', label: 'New York', acronym: 'EST' },
     { value: 'America/Chicago', label: 'Chicago', acronym: 'CST' },
@@ -183,7 +186,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => setMenusExpanded(true)}
             >
               <LayoutGrid className="w-4 h-4" />
-              <span>İşlemler</span>
+              <span>{translations?.operations ?? 'İşlemler'}</span>
             </Button>
           )}
           
@@ -194,7 +197,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Header row with close button */}
               <div className="flex items-center justify-between mb-2 px-1">
                 <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  İşlemler
+                  {translations?.operations ?? 'İşlemler'}
                 </span>
                 <button
                   onClick={() => setMenusExpanded(false)}
@@ -218,7 +221,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
                   </svg>
-                  <span>Takvim</span>
+                  <span>{translations?.calendar ?? 'Takvim'}</span>
                   {activeCustomMenu === null && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />}
                 </button>
 
@@ -288,7 +291,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <polyline points="5 12 12 19 19 12" className="opacity-40"/>
               </svg>
               <div className="text-left">
-                <div className="text-xs font-semibold leading-tight">Saat Yönü</div>
+                <div className="text-xs font-semibold leading-tight">{translations?.reverseTimeLabel ?? 'Saat Yönü'}</div>
                 <div className="text-[10px] leading-tight opacity-70 mt-0.5">
                   {reverseTime ? "23:00 → 00:00" : "00:00 → 23:00"}
                 </div>
@@ -313,7 +316,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         // Custom mini-calendar: receives the same props as the built-in one
         renderMiniCalendar({ currentDate, onDateChange, onViewChange })
       ) : (
-        <MiniCalendar currentDate={currentDate} onDateChange={onDateChange} onViewChange={onViewChange} />
+        <MiniCalendar currentDate={currentDate} onDateChange={onDateChange} onViewChange={onViewChange} locale={locale} />
       )}
 
       <div className="flex-1 px-4 space-y-5 mt-5">

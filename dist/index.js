@@ -4162,7 +4162,21 @@ var Scheduler = ({
 }) => {
   const [activeCustomMenu, setActiveCustomMenu] = React15.useState(null);
   const [activeCustomViewId, setActiveCustomViewId] = React15.useState(null);
-  const [reverseTime, setReverseTime] = React15.useState(reverseTimeProp);
+  const REVERSE_TIME_KEY = "calendarkit:reverseTime";
+  const [reverseTime, setReverseTime] = React15.useState(() => {
+    try {
+      const stored = localStorage.getItem(REVERSE_TIME_KEY);
+      return stored !== null ? stored === "true" : reverseTimeProp;
+    } catch {
+      return reverseTimeProp;
+    }
+  });
+  React15.useEffect(() => {
+    try {
+      localStorage.setItem(REVERSE_TIME_KEY, String(reverseTime));
+    } catch {
+    }
+  }, [reverseTime]);
   const [activeDragEvent, setActiveDragEvent] = React15.useState(null);
   const schedulerRef = React15.useRef(null);
   const [fabCssVars, setFabCssVars] = React15.useState({});

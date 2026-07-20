@@ -10,7 +10,7 @@ interface Calendar {
   active: boolean;
 }
 import { addDays, startOfWeek, addHours } from "date-fns";
-import { fr, enUS } from "date-fns/locale";
+import { DATE_FNS_LOCALES } from "@/index";
 
 // Generate demo events
 const generateDemoEvents = (): CalendarEvent[] => {
@@ -273,7 +273,7 @@ export default function Home() {
             onTimezoneChange={setTimezone}
             language={language}
             onLanguageChange={setLanguage}
-            locale={language === "fr" ? fr : enUS}
+            locale={DATE_FNS_LOCALES[language]}
             sidebarMenus={demoSidebarMenus}
             customViews={demoCustomViews}
           />

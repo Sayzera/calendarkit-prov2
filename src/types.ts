@@ -215,6 +215,8 @@ export interface CalendarTranslations {
   // ── Sidebar ─────────────────────────────────────────────────────────────────
   timezone: string;
   localTime: string;
+  operations: string;
+  reverseTimeLabel: string;
 
   // ── Search / filters ────────────────────────────────────────────────────────
   search: string;

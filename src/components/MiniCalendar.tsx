@@ -1,5 +1,6 @@
 import React from 'react';
 import { format, isSameMonth, isSameDay, isToday, addMonths, subMonths } from 'date-fns';
+import type { Locale } from 'date-fns';
 import { getMonthGrid } from '../lib/date';
 import { Button } from './ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -12,13 +13,16 @@ interface MiniCalendarProps {
   onDateChange: (date: Date) => void;
   onViewChange?: (view: ViewType) => void;
   className?: string;
+  /** date-fns locale used for month/year header formatting. */
+  locale?: Locale;
 }
 
 export const MiniCalendar: React.FC<MiniCalendarProps> = ({
   currentDate,
   onDateChange,
   onViewChange,
-  className
+  className,
+  locale,
 }) => {
   const [viewDate, setViewDate] = React.useState(currentDate);
   
@@ -28,7 +32,16 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
   }, [currentDate]);
 
   const days = React.useMemo(() => getMonthGrid(viewDate), [viewDate]);
-  const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+  // Generate weekday headers from locale (Mon=0 … Sun=6 shorthand)
+  const weekDays = React.useMemo(() => {
+    const base = new Date(2024, 0, 7); // Sunday Jan 7 2024
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(base);
+      d.setDate(base.getDate() + i);
+      return format(d, 'EEEEE', { locale }); // narrow (single letter)
+    });
+  }, [locale]);
 
   const handlePrev = () => {
     const newDate = subMonths(viewDate, 1);
@@ -56,7 +69,7 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <span className="text-sm font-semibold text-foreground capitalize">
-          {format(viewDate, 'MMMM yyyy')}
+          {format(viewDate, 'MMMM yyyy', { locale })}
         </span>
         <div className="flex items-center bg-muted/40 rounded-lg p-0.5">
             <Button

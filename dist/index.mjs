@@ -1,5 +1,5 @@
 import * as React15 from 'react';
-import React15__default, { useState, useRef, useEffect, useCallback, useId, useMemo, useLayoutEffect } from 'react';
+import React15__default, { useState, useEffect, useRef, useCallback, useId, useMemo, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useDraggable, useSensors, useSensor, PointerSensor, DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { createSnapModifier, restrictToWindowEdges } from '@dnd-kit/modifiers';
@@ -4141,7 +4141,21 @@ var Scheduler = ({
 }) => {
   const [activeCustomMenu, setActiveCustomMenu] = useState(null);
   const [activeCustomViewId, setActiveCustomViewId] = useState(null);
-  const [reverseTime, setReverseTime] = useState(reverseTimeProp);
+  const REVERSE_TIME_KEY = "calendarkit:reverseTime";
+  const [reverseTime, setReverseTime] = useState(() => {
+    try {
+      const stored = localStorage.getItem(REVERSE_TIME_KEY);
+      return stored !== null ? stored === "true" : reverseTimeProp;
+    } catch {
+      return reverseTimeProp;
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem(REVERSE_TIME_KEY, String(reverseTime));
+    } catch {
+    }
+  }, [reverseTime]);
   const [activeDragEvent, setActiveDragEvent] = useState(null);
   const schedulerRef = useRef(null);
   const [fabCssVars, setFabCssVars] = useState({});
