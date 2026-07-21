@@ -324,4 +324,7 @@ const sidebarMenus: SidebarMenuItem[] = [
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Copyright (c) 2026 [Sayzera](https://github.com/Sayzera).
+MIT — see [LICENSE](LICENSE).
+
+Copyright (c) 2026 [Sayzera](https://github.com/Sayzera)  
+Portions Copyright (c) 2025 CalendarKit (original project, forked and extended)
