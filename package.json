@@ -58,7 +58,7 @@
   "bugs": {
     "url": "https://github.com/Sayzera/calendarkit-prov2/issues"
   },
-  "homepage": "https://github.com/Sayzera/calendarkit-prov2#readme",
+  "homepage": "https://react-calendarkit-prov2.vercel.app/",
   "publishConfig": {
     "access": "public"
   },

@@ -315,6 +315,7 @@ const sidebarMenus: SidebarMenuItem[] = [
 
 ## Links
 
+- [Documentation](https://react-calendarkit-prov2.vercel.app/)
 - [GitHub Repository](https://github.com/Sayzera/calendarkit-prov2)
 - [npm Package](https://www.npmjs.com/package/calendarkit-prov2)
 - [Issues](https://github.com/Sayzera/calendarkit-prov2/issues)
