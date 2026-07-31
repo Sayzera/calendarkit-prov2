@@ -54,6 +54,37 @@ export interface EventReminder {
   label?: string; // e.g., "30 minutes before"
 }
 
+/**
+ * Optional badge rendered on timed event cards (e.g. Week view).
+ * Shown in the top-left corner when both icon and name are provided.
+ */
+export interface EventBadge {
+  /** Icon node (e.g. Lucide icon or any JSX). */
+  icon: React.ReactNode;
+  /** Short label displayed next to the icon. */
+  name: string;
+}
+
+/**
+ * Built-in badge identifiers for common lesson / session types.
+ * Prefer sending `badgeId` from the backend (JSON-safe) over a full `badge` object.
+ */
+export type BuiltInEventBadgeId =
+  | 'privateLesson'   // Özel Ders
+  | 'groupLesson'     // Grup Ders
+  | 'packageLesson'   // Paket Ders
+  | 'online'          // Online
+  | 'inPerson'        // Yüz Yüze
+  | 'homeVisit'       // Evde
+  | 'trial'           // Deneme
+  | 'makeup'          // Telafi
+  | 'exam'            // Sınav
+  | 'workshop'        // Workshop
+  | 'priority'        // Öncelikli
+  | 'holiday'         // Tatil
+  | 'cancelled'       // İptal
+  | 'listening';       // Dinleme / lab
+
 export interface CalendarEvent {
   id: string;
   title: string;
@@ -66,6 +97,16 @@ export interface CalendarEvent {
   resourceId?: string;
   type?: string; // e.g. "meeting", "task", "holiday"
   icon?: string;
+  /**
+   * Optional corner badge (icon + name) for timed event cards.
+   * Prefer `badgeId` when data comes from a JSON API — icons cannot travel over the wire.
+   */
+  badge?: EventBadge;
+  /**
+   * Built-in badge key from the backend (e.g. "packageLesson").
+   * Resolved to icon + label on the client via `getEventBadge` / `resolveEventBadge`.
+   */
+  badgeId?: BuiltInEventBadgeId;
   attachments?: EventAttachment[];
   guests?: string[]; // Array of email addresses
   reminders?: EventReminder[];

@@ -31,6 +31,8 @@ export type {
   CalendarTheme,
   CalendarTranslations,
   EventType,
+  EventBadge,
+  BuiltInEventBadgeId,
   Resource,
   EventReminder,
   EventAttachment,
@@ -42,6 +44,15 @@ export type {
 
 // Re-export locale utilities so consumers can access language metadata
 export { LANGUAGE_META, LOCALES, DATE_FNS_LOCALES, getTranslations } from './locales';
+
+// Re-export built-in event badge presets (Özel Ders, Grup Ders, Online, …)
+export {
+  EVENT_BADGES,
+  EVENT_BADGE_ICONS,
+  getEventBadge,
+  resolveEventBadge,
+  isBuiltInEventBadgeId,
+} from './lib/eventBadges';
 
 // Re-export utilities
 export { cn } from './utils';

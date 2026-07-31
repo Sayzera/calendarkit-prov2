@@ -1,7 +1,17 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Scheduler, CalendarEvent, ViewType, Resource, EventType, LanguageCode, SidebarMenuItem, CustomView } from "@/index";
+import {
+  Scheduler,
+  CalendarEvent,
+  ViewType,
+  Resource,
+  EventType,
+  LanguageCode,
+  SidebarMenuItem,
+  CustomView,
+} from "@/index";
+import type { BuiltInEventBadgeId } from "@/index";
 
 interface Calendar {
   id: string;
@@ -12,53 +22,66 @@ interface Calendar {
 import { addDays, startOfWeek, addHours } from "date-fns";
 import { DATE_FNS_LOCALES } from "@/index";
 
-// Generate demo events
+/**
+ * One demo row per built-in badge — keeps samples in sync with EVENT_BADGES.
+ * dayOffset: Mon=1 … Fri=5; hourStart is local hour; duration in hours.
+ */
+const BADGE_DEMO_SAMPLES: Record<
+  BuiltInEventBadgeId,
+  { title: string; dayOffset: number; hourStart: number; duration: number; color: string; resourceId?: string; calendarId: string }
+> = {
+  privateLesson:  { title: "Ayşe Yılmaz",        dayOffset: 1, hourStart: 9,  duration: 1,   color: "#3b82f6", resourceId: "room-a", calendarId: "work" },
+  groupLesson:    { title: "A1 İngilizce",       dayOffset: 1, hourStart: 11, duration: 1.5, color: "#8b5cf6", resourceId: "room-b", calendarId: "work" },
+  packageLesson:  { title: "Paket: 10. Ders",    dayOffset: 1, hourStart: 14, duration: 1,   color: "#10b981", resourceId: "room-a", calendarId: "work" },
+  online:         { title: "Zoom – Mehmet K.",   dayOffset: 2, hourStart: 9,  duration: 1,   color: "#3b82f6", resourceId: "room-a", calendarId: "work" },
+  inPerson:       { title: "Sınıf Dersi",        dayOffset: 2, hourStart: 11, duration: 1.5, color: "#f59e0b", resourceId: "room-b", calendarId: "work" },
+  trial:          { title: "Deneme Dersi",       dayOffset: 2, hourStart: 15, duration: 1,   color: "#ec4899", calendarId: "personal" },
+  workshop:       { title: "Speaking Club",      dayOffset: 3, hourStart: 10, duration: 2,   color: "#8b5cf6", resourceId: "room-c", calendarId: "work" },
+  makeup:         { title: "Telafi – Elif S.",   dayOffset: 3, hourStart: 13, duration: 1,   color: "#3b82f6", resourceId: "room-a", calendarId: "work" },
+  homeVisit:      { title: "Ev Dersi – Can",     dayOffset: 3, hourStart: 15, duration: 1,   color: "#14b8a6", calendarId: "work" },
+  exam:           { title: "Seviye Sınavı",      dayOffset: 4, hourStart: 9,  duration: 2,   color: "#ef4444", resourceId: "room-b", calendarId: "work" },
+  listening:      { title: "Listening Lab",      dayOffset: 4, hourStart: 12, duration: 1,   color: "#6366f1", resourceId: "room-c", calendarId: "work" },
+  priority:       { title: "VIP – Yönetici",     dayOffset: 4, hourStart: 15, duration: 1,   color: "#f59e0b", resourceId: "room-a", calendarId: "work" },
+  cancelled:      { title: "İptal Edilen Slot",  dayOffset: 5, hourStart: 10, duration: 1,   color: "#94a3b8", resourceId: "room-b", calendarId: "work" },
+  holiday:        { title: "Resmi Tatil",        dayOffset: 5, hourStart: 13, duration: 2,   color: "#10b981", calendarId: "personal" },
+};
+
+// Generate demo events — every built-in EVENT_BADGES preset gets one sample card
 const generateDemoEvents = (): CalendarEvent[] => {
-  const events: CalendarEvent[] = [];
   const today = new Date();
   const weekStart = startOfWeek(today);
 
-  const createEvent = (
-    id: string,
-    title: string,
-    dayOffset: number,
-    hourStart: number,
-    duration: number,
-    calendarId: string,
-    color: string,
-    resourceId?: string,
-    recurrence?: CalendarEvent["recurrence"]
-  ): CalendarEvent => {
-    const start = addHours(addDays(weekStart, dayOffset), hourStart);
-    const end = addHours(start, duration);
-    return { id, title, start, end, calendarId, color, resourceId, recurrence };
+  // Simulate backend payload: only badgeId string is sent (no JSX)
+  const badgeEvents: CalendarEvent[] = (Object.keys(BADGE_DEMO_SAMPLES) as BuiltInEventBadgeId[]).map((badgeId) => {
+    const sample = BADGE_DEMO_SAMPLES[badgeId];
+    const start = addHours(addDays(weekStart, sample.dayOffset), sample.hourStart);
+    const end = addHours(start, sample.duration);
+    return {
+      id: `badge-${badgeId}`,
+      title: sample.title,
+      start,
+      end,
+      calendarId: sample.calendarId,
+      color: sample.color,
+      resourceId: sample.resourceId,
+      // WeekView resolves badgeId → icon + label via resolveEventBadge
+      badgeId,
+    };
+  });
+
+  // One recurring event without a badge (shows non-badge events still work)
+  const gymStart = addHours(addDays(weekStart, 3), 17);
+  const gym: CalendarEvent = {
+    id: "gym",
+    title: "Gym",
+    start: gymStart,
+    end: addHours(gymStart, 1),
+    calendarId: "personal",
+    color: "#10b981",
+    recurrence: { freq: "WEEKLY", interval: 1 },
   };
 
-  // Monday
-  events.push(createEvent("1", "Team Standup", 1, 9, 0.5, "work", "#3b82f6", "room-a"));
-  events.push(createEvent("2", "Project Review", 1, 10, 2, "work", "#3b82f6", "room-b"));
-  events.push(createEvent("3", "Lunch Meeting", 1, 12, 1, "personal", "#10b981"));
-
-  // Tuesday
-  events.push(createEvent("4", "Client Call", 2, 9, 1, "work", "#3b82f6", "room-a"));
-  events.push(createEvent("5", "Code Review", 2, 14, 1.5, "work", "#3b82f6"));
-
-  // Wednesday - with recurrence
-  events.push(createEvent("6", "Workshop", 3, 10, 3, "work", "#3b82f6", "room-c"));
-  events.push(createEvent("7", "Gym", 3, 17, 1, "personal", "#10b981", undefined, {
-    freq: "WEEKLY",
-    interval: 1
-  }));
-
-  // Thursday
-  events.push(createEvent("8", "Sprint Planning", 4, 9, 2, "work", "#3b82f6", "room-b"));
-  events.push(createEvent("9", "1:1 Meeting", 4, 14, 0.5, "work", "#3b82f6", "room-a"));
-
-  // Friday
-  events.push(createEvent("10", "Demo Day", 5, 14, 2, "work", "#3b82f6", "room-c"));
-  events.push(createEvent("11", "Happy Hour", 5, 17, 2, "personal", "#10b981"));
-
-  return events;
+  return [...badgeEvents, gym];
 };
 
 // Demo resources
@@ -212,6 +235,8 @@ export default function Home() {
     { id: "personal", label: "Personal", color: "#10b981", active: true },
   ]);
 
+
+
   const filteredEvents = useMemo(() => {
     const activeIds = calendars.filter((c) => c.active).map((c) => c.id);
     return events.filter((e) => !e.calendarId || activeIds.includes(e.calendarId));
@@ -228,6 +253,8 @@ export default function Home() {
     };
     setEvents((prev) => [...prev, event]);
   };
+
+  console.log(events, "events")
 
   const handleEventUpdate = (updatedEvent: CalendarEvent) => {
     setEvents((prev) =>

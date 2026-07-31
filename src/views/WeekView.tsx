@@ -6,8 +6,11 @@ import { cn } from '../utils';
 import { DraggableEvent } from '../components/dnd/DraggableEvent';
 import { DroppableCell } from '../components/dnd/DroppableCell';
 import { ResizableEvent } from '../components/dnd/ResizableEvent';
+import { EventCardBadge } from '../components/EventCardBadge';
 import { Locale } from 'date-fns';
 import { getTimeFormat, getTimeFormatFull } from '../lib/date';
+import { resolveEventBadge } from '../lib/eventBadges';
+import { LanguageCode } from '../locales';
 
 interface WeekViewProps {
   currentDate: Date;
@@ -264,6 +267,9 @@ export const WeekView: React.FC<WeekViewProps> = ({
                           : (startMinutes / 60) * hourHeight;
                         
                         const isShortEvent = durationMinutes < 60;
+                        // Resolve badge from full object or backend-friendly badgeId
+                        const resolvedBadge = resolveEventBadge(event, language as LanguageCode);
+                        const hasBadge = Boolean(resolvedBadge);
                     
                         return (
                             <DraggableEvent
@@ -294,6 +300,8 @@ export const WeekView: React.FC<WeekViewProps> = ({
                                             readonly ? "cursor-default" : "cursor-grab active:cursor-grabbing",
                                             !event.color && "border-primary/20 bg-primary/10",
                                             isShortEvent ? "px-1 flex items-center justify-center" : "p-2",
+                                            // Reserve space under the badge so title/time do not overlap
+                                            hasBadge && !isShortEvent && "pt-4",
                                             // Add active border for overlapped events to distinguish them
                                             count > 1 && "border-l-4 border-l-primary/50"
                                         )}
@@ -310,6 +318,13 @@ export const WeekView: React.FC<WeekViewProps> = ({
                                         }}
                                         title={count > 1 ? `${event.title} (${index + 1}/${count})` : undefined}
                                     >
+                                        {/* Optional event badge — top-left corner (badge or badgeId) */}
+                                        {resolvedBadge && (
+                                          <EventCardBadge
+                                            badge={resolvedBadge}
+                                            compact={isShortEvent}
+                                          />
+                                        )}
                                         <div className="flex flex-col h-full overflow-hidden w-full">
                                             <div className={cn("font-semibold truncate text-foreground/90 leading-tight",
                                                 isShortEvent ? "text-xs text-center" : "text-xs"
