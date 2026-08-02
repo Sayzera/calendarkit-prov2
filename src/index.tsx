@@ -88,6 +88,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   translations,
   hideViewSwitcher,
   hideLanguageSwitcher,
+  hideFab = false,
   initialScrollHour = 8,
   reverseTime: reverseTimeProp = false,
   language = 'tr', // default language is Turkish
@@ -734,7 +735,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
     </DndContext>
 
     {/* Mobile FAB — portaled + inline styles so it stays visible outside overflow-hidden parents */}
-    {isMounted && isMobile && !readOnly && createPortal(
+    {isMounted && isMobile && !readOnly && !hideFab && createPortal(
       <div
         style={{
           position: 'fixed',

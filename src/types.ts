@@ -303,6 +303,11 @@ export interface CalendarProps {
   onThemeToggle?: () => void;
   hideViewSwitcher?: boolean;
   /**
+   * When true, hides the mobile floating action button (FAB) used to create events.
+   * Defaults to false (FAB is shown on viewports under 768px when not read-only).
+   */
+  hideFab?: boolean;
+  /**
    * Hour (0–23) the Day and Week views initially scroll to on mount.
    * Defaults to 8 (08:00 AM).
    */
