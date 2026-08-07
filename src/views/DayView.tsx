@@ -6,6 +6,7 @@ import { cn } from '../utils';
 import { DraggableEvent } from '../components/dnd/DraggableEvent';
 import { DroppableCell } from '../components/dnd/DroppableCell';
 import { ResizableEvent } from '../components/dnd/ResizableEvent';
+import { EventHoverPopover } from '../components/EventHoverPopover';
 import { Locale } from 'date-fns';
 import { getTimeFormat, getTimeFormatFull } from '../lib/date';
 
@@ -213,7 +214,9 @@ export const DayView: React.FC<DayViewProps> = ({
                          : (startMinutes / 60) * hourHeight;
 
                        // Compact layout only when enabled and event is under 45 minutes
+                       // Badges are intentionally disabled on short events
                        const isShortEvent = compactShortEvents && durationMinutes < 45;
+                       const timeRange = `${format(zonedStart, eventTimeFormat, { locale })} - ${format(zonedEnd, eventTimeFormat, { locale })}`;
 
                        return (
                          <DraggableEvent
@@ -236,6 +239,12 @@ export const DayView: React.FC<DayViewProps> = ({
                                 className="h-full"
                                 style={{ height: '100%' }}
                             >
+                                {/* Short events: title only; hover popover (no badge) */}
+                                <EventHoverPopover
+                                    enabled={isShortEvent}
+                                    event={event}
+                                    timeRange={timeRange}
+                                >
                                 <div
                                     className={cn(
                                         "h-full rounded-lg border-[0.5px] shadow-sm overflow-hidden transition-all hover:shadow-lg hover:z-20 group",
@@ -255,7 +264,7 @@ export const DayView: React.FC<DayViewProps> = ({
                                         e.stopPropagation();
                                         onEventClick?.(event);
                                     }}
-                                    title={count > 1 ? `${event.title} (${index + 1}/${count})` : undefined}
+                                    title={!isShortEvent && count > 1 ? `${event.title} (${index + 1}/${count})` : undefined}
                                 >
                                     <div className="flex flex-col h-full overflow-hidden w-full">
                                         <div className={cn(
@@ -268,7 +277,7 @@ export const DayView: React.FC<DayViewProps> = ({
                                         {!isShortEvent && (
                                             <>
                                                 <div className="text-xs text-muted-foreground mt-0.5 font-medium">
-                                                    {format(zonedStart, eventTimeFormat, { locale })} - {format(zonedEnd, eventTimeFormat, { locale })}
+                                                    {timeRange}
                                                 </div>
                                                 {event.description && height > 60 && (
                                                     <div className="text-xs text-muted-foreground/80 mt-1 line-clamp-2">
@@ -285,6 +294,7 @@ export const DayView: React.FC<DayViewProps> = ({
                                         )}
                                     </div>
                                 </div>
+                                </EventHoverPopover>
                             </ResizableEvent>
                          </DraggableEvent>
                        );

@@ -7,6 +7,7 @@ import { DraggableEvent } from '../components/dnd/DraggableEvent';
 import { DroppableCell } from '../components/dnd/DroppableCell';
 import { ResizableEvent } from '../components/dnd/ResizableEvent';
 import { EventCardBadge } from '../components/EventCardBadge';
+import { EventHoverPopover } from '../components/EventHoverPopover';
 import { Locale } from 'date-fns';
 import { getTimeFormat, getTimeFormatFull } from '../lib/date';
 import { resolveEventBadge } from '../lib/eventBadges';
@@ -274,8 +275,10 @@ export const WeekView: React.FC<WeekViewProps> = ({
                         
                         // Compact layout only when enabled and event is under 60 minutes
                         const isShortEvent = compactShortEvents && durationMinutes < 60;
-                        // Resolve badge from full object or backend-friendly badgeId
-                        const resolvedBadge = resolveEventBadge(event, language as LanguageCode);
+                        // Badges are disabled on short events — resolve only for full cards
+                        const resolvedBadge = !isShortEvent
+                          ? resolveEventBadge(event, language as LanguageCode)
+                          : undefined;
                         const hasBadge = Boolean(resolvedBadge);
                     
                         return (
@@ -300,6 +303,12 @@ export const WeekView: React.FC<WeekViewProps> = ({
                                     className="h-full"
                                     style={{ height: '100%' }}
                                 >
+                                    {/* Short events: title only; full details in hover popover */}
+                                    <EventHoverPopover
+                                        enabled={isShortEvent}
+                                        event={event}
+                                        timeRange={`${format(zonedEventStart, eventTimeFormat, { locale })} - ${format(zonedEventEnd, eventTimeFormat, { locale })}`}
+                                    >
                                     <div
                                         className={cn(
                                             "rounded-md border shadow-sm transition-all hover:shadow-md group overflow-hidden relative",
@@ -323,13 +332,13 @@ export const WeekView: React.FC<WeekViewProps> = ({
                                             e.stopPropagation();
                                             onEventClick?.(event);
                                         }}
-                                        title={count > 1 ? `${event.title} (${index + 1}/${count})` : undefined}
+                                        title={!isShortEvent && count > 1 ? `${event.title} (${index + 1}/${count})` : undefined}
                                     >
-                                        {/* Optional event badge — top-left corner (badge or badgeId) */}
-                                        {resolvedBadge && (
+                                        {/* Badge only on non-short events */}
+                                        {hasBadge && (
                                           <EventCardBadge
-                                            badge={resolvedBadge}
-                                            compact={isShortEvent}
+                                            badge={resolvedBadge!}
+                                            compact={false}
                                           />
                                         )}
                                         <div className="flex flex-col h-full overflow-hidden w-full">
@@ -358,6 +367,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
                                             )}
                                         </div>
                                     </div>
+                                    </EventHoverPopover>
                                 </ResizableEvent>
                             </DraggableEvent>
                         );

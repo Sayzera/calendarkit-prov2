@@ -308,9 +308,10 @@ export interface CalendarProps {
    */
   hideFab?: boolean;
   /**
-   * When true (default), short timed events hide secondary details (time range, description)
-   * to fit the card: Week under 60 min, Day under 45 min.
-   * Set to false to always show title + time (+ description when space allows).
+   * When true (default), short timed events show title only on the card;
+   * hovering reveals a popover with time, description, badge, and meta.
+   * Thresholds: Week under 60 min, Day under 45 min.
+   * Set to false to always show details inline on the card.
    */
   compactShortEvents?: boolean;
   /**
