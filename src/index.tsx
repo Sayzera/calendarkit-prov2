@@ -89,6 +89,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   hideViewSwitcher,
   hideLanguageSwitcher,
   hideFab = false,
+  compactShortEvents = true,
   initialScrollHour = 8,
   reverseTime: reverseTimeProp = false,
   language = 'tr', // default language is Turkish
@@ -568,6 +569,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                                 language={language}
                                 initialScrollHour={initialScrollHour}
                                 reverseTime={reverseTime}
+                                compactShortEvents={compactShortEvents}
                                 />
                             )}
                             {view === 'day' && (
@@ -583,6 +585,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                                     language={language}
                                     initialScrollHour={initialScrollHour}
                                     reverseTime={reverseTime}
+                                    compactShortEvents={compactShortEvents}
                                 />
                             )}
                             {view === 'agenda' && (

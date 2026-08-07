@@ -29,6 +29,11 @@ interface WeekViewProps {
    * When false (default), time flows top-to-bottom (00:00 at top → 23:00 at bottom).
    */
   reverseTime?: boolean;
+  /**
+   * When true (default), events shorter than 60 minutes hide time/description.
+   * Set false to always show secondary details on the card.
+   */
+  compactShortEvents?: boolean;
 }
 
 export const WeekView: React.FC<WeekViewProps> = ({
@@ -43,6 +48,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
   language = 'tr',
   initialScrollHour = 8,
   reverseTime = false,
+  compactShortEvents = true,
 }) => {
   // Generate days for the week
   const start = startOfWeek(currentDate, { weekStartsOn: 1 });
@@ -266,7 +272,8 @@ export const WeekView: React.FC<WeekViewProps> = ({
                           ? (1440 - startMinutes - durationMinutes) / 60 * hourHeight
                           : (startMinutes / 60) * hourHeight;
                         
-                        const isShortEvent = durationMinutes < 60;
+                        // Compact layout only when enabled and event is under 60 minutes
+                        const isShortEvent = compactShortEvents && durationMinutes < 60;
                         // Resolve badge from full object or backend-friendly badgeId
                         const resolvedBadge = resolveEventBadge(event, language as LanguageCode);
                         const hasBadge = Boolean(resolvedBadge);

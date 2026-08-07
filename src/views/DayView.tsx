@@ -26,6 +26,11 @@ interface DayViewProps {
    * When false (default), time flows top-to-bottom (00:00 at top → 23:00 at bottom).
    */
   reverseTime?: boolean;
+  /**
+   * When true (default), events shorter than 45 minutes hide time/description.
+   * Set false to always show secondary details on the card.
+   */
+  compactShortEvents?: boolean;
 }
 
 export const DayView: React.FC<DayViewProps> = ({
@@ -40,6 +45,7 @@ export const DayView: React.FC<DayViewProps> = ({
   language = 'tr',
   initialScrollHour = 8,
   reverseTime = false,
+  compactShortEvents = true,
 }) => {
   // Hours array: reversed shows 23→0, normal shows 0→23
   const hours = reverseTime
@@ -206,7 +212,8 @@ export const DayView: React.FC<DayViewProps> = ({
                          ? (1440 - startMinutes - durationMinutes) / 60 * hourHeight
                          : (startMinutes / 60) * hourHeight;
 
-                       const isShortEvent = durationMinutes < 45;
+                       // Compact layout only when enabled and event is under 45 minutes
+                       const isShortEvent = compactShortEvents && durationMinutes < 45;
 
                        return (
                          <DraggableEvent

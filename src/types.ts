@@ -308,6 +308,12 @@ export interface CalendarProps {
    */
   hideFab?: boolean;
   /**
+   * When true (default), short timed events hide secondary details (time range, description)
+   * to fit the card: Week under 60 min, Day under 45 min.
+   * Set to false to always show title + time (+ description when space allows).
+   */
+  compactShortEvents?: boolean;
+  /**
    * Hour (0–23) the Day and Week views initially scroll to on mount.
    * Defaults to 8 (08:00 AM).
    */
