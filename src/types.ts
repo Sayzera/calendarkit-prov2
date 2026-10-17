@@ -252,6 +252,8 @@ export interface CalendarTranslations {
   tomorrow: string;
   eventCount: string;
   eventsCount: string;
+  hourCount: string;
+  hoursCount: string;
 
   // ── Sidebar ─────────────────────────────────────────────────────────────────
   timezone: string;
@@ -332,6 +334,13 @@ export interface CalendarProps {
    * The `language` prop still sets the active locale; it just won't be user-changeable.
    */
   hideLanguageSwitcher?: boolean;
+  /**
+   * Optional hour total shown as a clock badge next to the event-count badge
+   * in the header. The library does not compute this — pass whatever number
+   * your app wants to display (e.g. booked hours in the current view).
+   * Hidden when omitted.
+   */
+  hourCount?: number;
   /**
    * Replace the default event form/modal with a fully custom component.
    * Receives open state, the event being edited, and save/delete handlers.

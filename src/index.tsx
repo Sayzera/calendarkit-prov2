@@ -88,6 +88,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   translations,
   hideViewSwitcher,
   hideLanguageSwitcher,
+  hourCount,
   hideFab = false,
   compactShortEvents = true,
   initialScrollHour = 8,
@@ -396,6 +397,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
             activeCustomViewId={activeCustomViewId}
             onCustomViewChange={(id) => { setActiveCustomViewId(id); setActiveCustomMenu(null); }}
             eventCount={viewEventCount}
+            hourCount={hourCount}
             hideLanguageSwitcher={hideLanguageSwitcher}
           />
         )}

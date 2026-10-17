@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from
 import { createPortal } from 'react-dom';
 import { format, Locale } from 'date-fns';
 import { Button } from './ui/button';
-import { ChevronLeft, ChevronRight, Menu, Moon, Sun, CalendarDays, CalendarRange, Calendar, ListTodo, ChevronDown, Globe, Plus, MoreHorizontal, CalendarCheck2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Menu, Moon, Sun, CalendarDays, CalendarRange, Calendar, ListTodo, ChevronDown, Globe, Plus, MoreHorizontal, CalendarCheck2, Clock } from 'lucide-react';
 import { ViewType, CustomView } from '../types';
 import { LanguageCode, LANGUAGE_META } from '../locales';
 import { cn } from '../utils';
@@ -53,6 +53,8 @@ interface CalendarHeaderProps {
   onCustomViewChange?: (id: string | null) => void;
   /** Total number of visible events – displayed as a badge before the view switcher. */
   eventCount?: number;
+  /** Optional hour total – displayed as a clock badge next to the event count. */
+  hourCount?: number;
   /** When true, hides the language-switcher dropdown. The active language is still applied. */
   hideLanguageSwitcher?: boolean;
 }
@@ -77,6 +79,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   activeCustomViewId,
   onCustomViewChange,
   eventCount,
+  hourCount,
   hideLanguageSwitcher = false,
 }) => {
   const [isLangOpen, setIsLangOpen] = useState(false);
@@ -336,14 +339,27 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
           </Button>
         )}
 
-        {/* ── Event count badge – displayed to the left of the view switcher ── */}
-        {typeof eventCount === 'number' && !hideViewSwitcher && (
-          <div
-            className="flex items-center gap-1.5 h-8 px-3 rounded-xl bg-primary/10 text-primary text-xs font-semibold tabular-nums select-none border border-primary/20 shadow-sm shadow-primary/10"
-            title={`${eventCount} event${eventCount !== 1 ? 's' : ''}`}
-          >
-            <CalendarCheck2 className="w-3.5 h-3.5 shrink-0" />
-            <span>{eventCount}</span>
+        {/* ── Event count + hour count badges – left of the view switcher ── */}
+        {!hideViewSwitcher && (typeof eventCount === 'number' || typeof hourCount === 'number') && (
+          <div className="flex items-center gap-1.5">
+            {typeof eventCount === 'number' && (
+              <div
+                className="flex items-center gap-1.5 h-8 px-3 rounded-xl bg-primary/10 text-primary text-xs font-semibold tabular-nums select-none border border-primary/20 shadow-sm shadow-primary/10"
+                title={`${eventCount} ${eventCount === 1 ? (translations.eventCount ?? 'event') : (translations.eventsCount ?? 'events')}`}
+              >
+                <CalendarCheck2 className="w-3.5 h-3.5 shrink-0" />
+                <span>{eventCount}</span>
+              </div>
+            )}
+            {typeof hourCount === 'number' && (
+              <div
+                className="flex items-center gap-1.5 h-8 px-3 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-semibold tabular-nums select-none border border-amber-500/20 shadow-sm shadow-amber-500/10"
+                title={`${hourCount} ${hourCount === 1 ? (translations.hourCount ?? 'hour') : (translations.hoursCount ?? 'hours')}`}
+              >
+                <Clock className="w-3.5 h-3.5 shrink-0" />
+                <span>{hourCount}</span>
+              </div>
+            )}
           </div>
         )}
 

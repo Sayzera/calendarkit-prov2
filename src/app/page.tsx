@@ -19,7 +19,7 @@ interface Calendar {
   color: string;
   active: boolean;
 }
-import { addDays, startOfWeek, addHours } from "date-fns";
+import { addDays, startOfWeek, addHours, differenceInMinutes, startOfMonth, endOfMonth, endOfWeek, startOfDay, endOfDay } from "date-fns";
 import { DATE_FNS_LOCALES } from "@/index";
 
 /**
@@ -242,6 +242,42 @@ export default function Home() {
     return events.filter((e) => !e.calendarId || activeIds.includes(e.calendarId));
   }, [events, calendars]);
 
+  // Hour badge is fully prop-driven — compute booked hours for the current view.
+  const hourCount = useMemo(() => {
+    let rangeStart: Date;
+    let rangeEnd: Date;
+    switch (view) {
+      case "month":
+        rangeStart = startOfMonth(date);
+        rangeEnd = endOfMonth(date);
+        break;
+      case "week":
+        rangeStart = startOfWeek(date, { weekStartsOn: 1 });
+        rangeEnd = endOfWeek(date, { weekStartsOn: 1 });
+        break;
+      case "day":
+      case "resource":
+        rangeStart = startOfDay(date);
+        rangeEnd = endOfDay(date);
+        break;
+      case "agenda":
+        rangeStart = startOfDay(date);
+        rangeEnd = addDays(rangeStart, 30);
+        break;
+      default:
+        return 0;
+    }
+
+    const minutes = filteredEvents
+      .filter((e) => e.start >= rangeStart && e.start <= rangeEnd && !e.allDay)
+      .reduce((sum, e) => {
+        const mins = differenceInMinutes(e.end, e.start);
+        return sum + (mins > 0 ? mins : 0);
+      }, 0);
+
+    return Math.round((minutes / 60) * 10) / 10;
+  }, [filteredEvents, view, date]);
+
   const handleEventCreate = (newEvent: Partial<CalendarEvent>) => {
     const event: CalendarEvent = {
       ...newEvent,
@@ -303,6 +339,7 @@ export default function Home() {
             locale={DATE_FNS_LOCALES[language]}
             sidebarMenus={demoSidebarMenus}
             customViews={demoCustomViews}
+            hourCount={hourCount}
           />
         </div>
       </div>

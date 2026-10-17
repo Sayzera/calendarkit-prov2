@@ -175,6 +175,7 @@ import type {
 | `language` | `LanguageCode` | `'tr'` | UI language (15+ locales) |
 | `onLanguageChange` | `(lang) => void` | — | Language change handler |
 | `hideLanguageSwitcher` | `boolean` | `false` | Hide the language dropdown from the header. The `language` prop still sets the active locale. |
+| `hourCount` | `number` | — | Optional hour total shown as a clock badge next to the event count. Hidden when omitted. |
 | `locale` | `Locale` | — | date-fns locale for date formatting |
 | `isDarkMode` | `boolean` | — | Dark mode state |
 | `onThemeToggle` | `() => void` | — | Theme toggle handler |
@@ -207,6 +208,19 @@ The header automatically displays a **live event count badge** next to the view 
 | Agenda | Events in the next 30 days |
 
 The badge updates automatically when you navigate or filter calendars.
+
+### Hour count badge
+
+Pass `hourCount` to show a **clock badge** next to the event count. The library does not calculate this number — you decide what it means (booked hours, remaining hours, billable hours, etc.).
+
+```tsx
+<ProScheduler
+  hourCount={12.5}
+  ...
+/>
+```
+
+Omit the prop to hide the badge. Decimal values are supported.
 
 ### Create Event button
 
