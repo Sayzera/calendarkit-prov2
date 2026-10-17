@@ -14,6 +14,12 @@ Professional React calendar component with drag-and-drop, recurring events, time
 npm install calendarkit-prov2
 ```
 
+After a new release, install the latest published version in your project:
+
+```bash
+npm install calendarkit-prov2@latest
+```
+
 ### Peer dependencies
 
 - `react` ^18 or ^19

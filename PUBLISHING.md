@@ -111,6 +111,14 @@ Workflow: `.github/workflows/publish-npm.yml`
 
 ## Yayın sonrası
 
+Sürümün npm'e düştüğünü kontrol et:
+
 ```bash
 npm view calendarkit-prov2 version
+```
+
+Projeye kurmak için:
+
+```bash
+npm install calendarkit-prov2@latest
 ```
